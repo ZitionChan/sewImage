@@ -49,7 +49,7 @@ class sewImage(object):
 			for w in range(width):#比对一行
 				r1,g1,b1 = imgdata1[width*h+w]
 				r2,g2,b2 = imgdata2[width*h+w]
-				if(abs(r1-r2)<25 and abs(g1-g2)<25 and abs(b1-b2)<25):
+				if(abs(r1-r2)<30 and abs(g1-g2)<30 and abs(b1-b2)<30):
 					equalPixel +=1
 			if(equalPixel<width*hitRate):
 				head = h
@@ -65,29 +65,23 @@ class sewImage(object):
 		width = self.__width
 		height = self.__height
 		for i in range(len(self.__imgdatas)-1):
-			equalPixel=0
 			tail = newHeight
 			imgdata2 = list(self.__imgdatas[i+1])
 			head = self.__findHead()
 
 			offsetLine = 15 #同时检查offsetLine行是否一致
 			for h in range(newHeight-offsetLine)[::-1]:
-				for w in range(width):
-					r1,g1,b1 = imgdata2[w+width*head]
-					r2,g2,b2 = newImgData[w+width*h]
+				line1 = imgdata2[width*head:width*(head+1)]
+				line2 = newImgData[width*h:width*(h+1)]
 
-					r3,g3,b3 = imgdata2[w+width*(head+offsetLine)]
-					r4,g4,b4 = newImgData[w+width*(h+offsetLine)]
-
-					if(r1==r2 and g1==g2 and b1==b2 and r3==r4 and g3==g4 and b3==b4):
-						equalPixel+=1
+				line3 = imgdata2[width*(head+offsetLine):width*(head+offsetLine+1)]
+				line4 = newImgData[width*(h+offsetLine):width*(h+offsetLine+1)]
 
 				if(h < newHeight-height): #没有找到相同行
 					break
-				if(equalPixel==width):
+				if(line1==line2 and line3 == line4):
 					tail = h
 					break
-				equalPixel=0
 
 			newImgData = newImgData[:width*tail]
 			newImgData.extend(imgdata2[width*head:])
